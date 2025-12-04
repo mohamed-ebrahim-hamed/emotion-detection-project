@@ -1,0 +1,5 @@
+transformers==4.35.0
+torch
+google-cloud-storage
+functions-framework
+sentencepiece
