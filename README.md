@@ -75,7 +75,7 @@ emotion-detection-project/
 │       ├── best_audio_model.h5          # Best model checkpoint
 │       ├── final_audio_model.h5         # Final trained model
 │       ├── model_weights.weights.h5     # Model weights only
-│       ├── label_encoder_classes.npy.npy # Emotion label mappings
+│       ├── label_encoder_classes. npy.npy # Emotion label mappings
 │       ├── training_history.csv         # Training metrics
 │       ├── accuracy_plot.png            # Accuracy visualization
 │       ├── loss_plot.png                # Loss visualization
@@ -173,7 +173,7 @@ Anger, Disgust, Fear, Happy, Neutral, Sad
 | `AUDIO EMOTION PREDICTION TEST.ipynb` | Interactive testing notebook for evaluating the voice model on audio files |
 | `results/best_audio_model.h5` | Model checkpoint with the best validation performance during training |
 | `results/final_audio_model.h5` | Final trained model ready for deployment |
-| `results/label_encoder_classes.npy.npy` | Label encoder for converting predictions to emotion names |
+| `results/label_encoder_classes. npy.npy` | Label encoder for converting predictions to emotion names (Note: file has double extension) |
 | `results/training_history.csv` | Complete training metrics log (loss, accuracy per epoch) |
 
 ---
@@ -272,18 +272,38 @@ jupyter notebook "AUDIO EMOTION PREDICTION TEST.ipynb"
 ```python
 import tensorflow as tf
 import numpy as np
-from your_audio_processing import extract_features
+import librosa
+
+def extract_features(file_path, max_pad_len=174, n_mfcc=40):
+    """Extract MFCC features from audio file"""
+    audio, sr = librosa.load(file_path, sr=22050)
+    mfccs = librosa.feature.mfcc(y=audio, sr=sr, n_mfcc=n_mfcc)
+    
+    # Padding
+    if mfccs.shape[1] < max_pad_len:
+        pad_width = max_pad_len - mfccs.shape[1]
+        mfccs = np.pad(mfccs, ((0, 0), (0, pad_width)), mode='constant')
+    else:
+        mfccs = mfccs[:, :max_pad_len]
+    
+    return mfccs
 
 # Load model
 model = tf.keras.models.load_model('results/best_audio_model.h5')
 
+# Load label encoder
+label_classes = np.load('results/label_encoder_classes. npy.npy', allow_pickle=True)
+
 # Load audio and extract features
 features = extract_features('path/to/audio.wav')
+features = np.expand_dims(features, axis=0)
+features = np.expand_dims(features, axis=-1)
 
 # Predict emotion
 prediction = model.predict(features)
-emotion = label_encoder.inverse_transform([np.argmax(prediction)])
-print(f"Detected emotion: {emotion[0]}")
+emotion_idx = np.argmax(prediction)
+emotion = label_classes[emotion_idx]
+print(f"Detected emotion: {emotion}")
 ```
 
 ---
