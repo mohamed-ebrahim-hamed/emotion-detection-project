@@ -6,11 +6,6 @@ The app analyzes English text and predicts one or more emotions present in the s
 
 ---
 
-## 🚀 Live Demo
-> _Add Streamlit Cloud link here after deployment_
-
----
-
 ## 📌 Features
 - ✅ Multi-label emotion classification (more than one emotion per sentence)
 - ✅ Fine-tuned DistilBERT model
@@ -110,7 +105,7 @@ The model is trained only on English text.
 
 Predictions may include multiple emotions for a single sentence.
 
-For best results, avoid very short or ambiguous inputs.
+For best results, please avoid very short or ambiguous inputs.
 
 🔮 Future Improvements
 
@@ -124,14 +119,13 @@ Model performance visualization
 
 Improved UI with charts and emotion bars
 
-👤 Author
-
-Your Name Here
-AI Engineer | Data Scientist
-
-GitHub: https://github.com/USERNAME
-
-LinkedIn: https://linkedin.com/in/YOUR_PROFILE
+👤 Team Members
+1- Mohamed Ebrahim Hamed
+2- Eslam Mohamed Elgawessh
+3- Ahmed Yasir Khattab
+4- Mohamed Mohamed Abouelenin
+5- Mohammed Mahmoud Khalil
+6- Hossam Yousef
 
 📜 License
 
