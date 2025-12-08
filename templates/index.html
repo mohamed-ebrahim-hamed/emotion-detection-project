@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🎤 نظام التعرف على المشاعر من الصوت</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div class="wrapper">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-content">
+                <h1><i class="fas fa-microphone-alt"></i> نظام التعرف على المشاعر من الصوت</h1>
+                <p>تحليل المشاعر من الصوت باستخدام الذكاء الاصطناعي</p>
+            </div>
+        </header>
+
+        <!-- Main Container -->
+        <main class="container">
+            <!-- Section 1: Input Options -->
+            <section class="input-section">
+                <div class="tabs">
+                    <button class="tab-btn active" data-tab="upload">
+                        <i class="fas fa-upload"></i> تحميل ملف
+                    </button>
+                    <button class="tab-btn" data-tab="record">
+                        <i class="fas fa-microphone"></i> تسجيل
+                    </button>
+                    <button class="tab-btn" data-tab="text">
+                        <i class="fas fa-keyboard"></i> تحليل نص
+                    </button>
+                </div>
+
+                <!-- Tab 1: Upload -->
+                <div id="upload-tab" class="tab-content active">
+                    <div class="upload-area" id="uploadArea">
+                        <div class="upload-icon">
+                            <i class="fas fa-cloud-upload-alt"></i>
+                        </div>
+                        <h3>اسحب وأفلت ملف الصوت هنا</h3>
+                        <p>أو انقر لاختيار ملف</p>
+                        <input type="file" id="audioFile" accept="audio/*" hidden>
+                        <p class="file-formats">صيغ مدعومة: WAV, MP3, M4A, OGG, WEBM</p>
+                    </div>
+                </div>
+
+                <!-- Tab 2: Record -->
+                <div id="record-tab" class="tab-content">
+                    <div class="recorder-section">
+                        <div class="recorder-info">
+                            <p>سجل صوتك مباشرة من خلال الميكروفون</p>
+                        </div>
+                        <div class="recorder-buttons">
+                            <button class="btn btn-record" id="recordBtn">
+                                <i class="fas fa-microphone"></i> بدء التسجيل
+                            </button>
+                            <button class="btn btn-stop" id="stopRecordBtn" disabled>
+                                <i class="fas fa-stop"></i> إيقاف التسجيل
+                            </button>
+                        </div>
+                        <div class="recording-status" id="recordingStatus" style="display: none;">
+                            <div class="recording-indicator"></div>
+                            <span>جاري التسجيل...</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tab 3: Text Analysis -->
+                <div id="text-tab" class="tab-content">
+                    <div class="text-input-section">
+                        <h3><i class="fas fa-keyboard"></i> أدخل النص للتحليل</h3>
+                        <textarea 
+                            id="textInput" 
+                            class="text-input" 
+                            placeholder="اكتب أو الصق النص هنا... (مثال: I'm so happy today!)"
+                            rows="6"
+                        ></textarea>
+                        <div class="text-actions">
+                            <button class="btn btn-analyze btn-lg" id="analyzeTextBtn">
+                                <i class="fas fa-brain"></i> تحليل النص
+                            </button>
+                            <button class="btn btn-secondary" id="clearTextBtn">
+                                <i class="fas fa-eraser"></i> مسح
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Text Result Section -->
+            <section class="text-result-container" id="textResultContainer" style="display: none;">
+                <h2><i class="fas fa-chart-bar"></i> نتائج تحليل النص</h2>
+                
+                <div class="text-emotions-grid" id="textEmotionsGrid"></div>
+            </section>
+
+            <!-- Audio Sections -->
+            <section class="input-section">
+                <!-- Selected File Info -->
+                <div class="file-selected" id="fileSelected" style="display: none;">
+                    <div class="file-info-content">
+                        <i class="fas fa-check-circle"></i>
+                        <div class="file-details">
+                            <span class="file-name" id="fileName"></span>
+                            <span class="file-size" id="fileSize"></span>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Section 2: Audio Preview -->
+            <section class="preview-section" id="previewSection" style="display: none;">
+                <h2><i class="fas fa-headphones"></i> معاينة الصوت</h2>
+                <audio id="audioPlayer" controls class="audio-player"></audio>
+                <canvas id="audioWaveform" class="waveform-canvas"></canvas>
+            </section>
+
+            <!-- Section 3: Action Buttons -->
+            <section class="actions-section" id="actionsSection" style="display: none;">
+                <button class="btn btn-analyze btn-lg" id="analyzeBtn">
+                    <i class="fas fa-brain"></i> تحليل الصوت
+                </button>
+                <button class="btn btn-secondary" id="clearBtn">
+                    <i class="fas fa-times"></i> مسح واختيار آخر
+                </button>
+            </section>
+
+            <!-- Section 4: Loading -->
+            <div class="loading-container" id="loading" style="display: none;">
+                <div class="loading-spinner">
+                    <div class="spinner"></div>
+                </div>
+                <p>جاري تحليل الصوت...</p>
+                <p class="loading-subtitle">يرجى الانتظار قليلاً</p>
+            </div>
+
+            <!-- Section 5: Error Message -->
+            <div class="error-container" id="errorMessage" style="display: none;">
+                <div class="error-content">
+                    <i class="fas fa-exclamation-circle"></i>
+                    <p id="errorText"></p>
+                </div>
+            </div>
+
+            <!-- Section 6: Results -->
+            <div class="result-container" id="resultContainer" style="display: none;">
+                <!-- Main Emotion Display -->
+                <div class="emotion-main">
+                    <div class="emotion-card" id="emotionDisplay">
+                        <div class="emotion-emoji" id="emotionEmoji">😊</div>
+                        <div class="emotion-info">
+                            <h2 id="emotionText">سعيد</h2>
+                            <div class="confidence-bar">
+                                <div class="confidence-fill" id="confidenceFill"></div>
+                            </div>
+                            <p class="confidence-text" id="confidenceText">الثقة: 95%</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- All Emotions Probabilities -->
+                <div class="probabilities-section">
+                    <h3><i class="fas fa-chart-bar"></i> تفصيل جميع المشاعر</h3>
+                    <div class="probabilities-grid" id="probabilitiesList"></div>
+                </div>
+
+                <!-- Action Buttons -->
+                <div class="result-actions">
+                    <button class="btn btn-secondary" id="analyzeAgainBtn">
+                        <i class="fas fa-redo"></i> تحليل آخر
+                    </button>
+                </div>
+            </div>
+        </main>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <p>© 2024 نظام التعرف على المشاعر من الصوت</p>
+            <p class="model-accuracy">دقة النموذج: 97.25% | مدعوم بـ TensorFlow و Librosa</p>
+        </footer>
+    </div>
+
+    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+</body>
+</html>
