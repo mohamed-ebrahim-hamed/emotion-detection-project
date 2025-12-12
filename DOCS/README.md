@@ -295,21 +295,4 @@ python app.py
 
 ---
 
-## 👥 الفريق / Team
-
-- **Mohamed Ebrahim Hamed** - Developer
-
----
-
-## 📞 التواصل / Contact
-
-- GitHub: [mohamed-ebrahim-hamed](https://github.com/mohamed-ebrahim-hamed)
-
----
-
-## 🙏 شكر وتقدير / Acknowledgments
-
-- RAVDESS, CREMA-D, TESS, SAVEE datasets
-- Google GoEmotions dataset
-- Hugging Face Transformers library
-- TensorFlow and Keras teams
+##
